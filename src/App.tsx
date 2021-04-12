@@ -5,7 +5,7 @@ import Editor, { useMonaco } from "@monaco-editor/react";
 import { useRef, useState } from "react";
 import dashify from "dashify";
 
-const parts = [Parts.Part01, Parts.Part02, Parts.Part03];
+const parts = [Parts.Part01, Parts.Part02, Parts.Part03, Parts.Part04];
 
 export default function App() {
   const monaco = useMonaco();
@@ -14,7 +14,7 @@ export default function App() {
     <div>
       <Tabs defaultActiveKey="part-02" id="uncontrolled-tab-example">
         {parts.map((p, i) => (
-          <Tab eventKey={dashify(`Part ${i + 2}`)} title={`Part ${i + 2}`}>
+          <Tab eventKey={dashify(`Part ${i + 1}`)} title={`Part ${i + 1}`}>
             <PartTab p={p} />
           </Tab>
         ))}

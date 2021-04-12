@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { Observable, of, interval } from "rxjs";
-import { map, mapTo } from "rxjs/operators";
+import { map, mapTo, tap } from "rxjs/operators";
 
 export const Part01 = () => {
   const title = "Understand RxJS Operators";
@@ -75,6 +75,37 @@ export const Part03 = () => {
   const onClick = () => {
     subscribeWithTitle(bar, "bar");
     subscribeWithTitle(barMapTo, "barMapTo");
+  };
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      <Button onClick={onClick}>Open console and click this</Button>
+    </div>
+  );
+};
+
+const subscribeWithTitle = (dest: Observable<any>, destName: string) => {
+  dest.subscribe(
+    (x: any) => console.log(`[${destName}] next: ${x}`),
+    (err: any) => console.log(`[${destName}] error: [${err}] `),
+    () => console.log(`[${destName}] done`)
+  );
+};
+
+export const Part04 = () => {
+  const title = "Inspect the Behavior of Operators with RxJS tap";
+
+  let foo: Observable<number> = interval(1000);
+
+  var bar = foo.pipe(
+    tap((x) => console.log("before " + x)),
+    map((x) => x * 2),
+    tap((x) => console.log("after " + x))
+  );
+
+  const onClick = () => {
+    subscribeWithTitle(bar, "bar");
   };
 
   return (
