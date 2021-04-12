@@ -5,16 +5,13 @@ import Editor, { useMonaco } from "@monaco-editor/react";
 import { useRef, useState } from "react";
 import dashify from "dashify";
 
-const parts = [Parts.Part02, Parts.Part03];
+const parts = [Parts.Part01];
 
 export default function App() {
-  const [isEditorReady, setIsEditorReady] = useState(false);
-  const valueGetter = useRef();
   const monaco = useMonaco();
 
   return (
     <div>
-      test
       <Tabs defaultActiveKey="part-02" id="uncontrolled-tab-example">
         {parts.map((p, i) => (
           <Tab eventKey={dashify(`Part ${i + 2}`)} title={`Part ${i + 2}`}>

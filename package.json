@@ -1,12 +1,8 @@
 {
-  "name": "react-typescript",
+  "name": "rxjs-operators-wip",
   "version": "1.0.0",
-  "description": "React and TypeScript example starter project",
-  "keywords": [
-    "typescript",
-    "react",
-    "starter"
-  ],
+  "description": "",
+  "keywords": [],
   "main": "src/index.tsx",
   "dependencies": {
     "@monaco-editor/react": "4.1.1",
