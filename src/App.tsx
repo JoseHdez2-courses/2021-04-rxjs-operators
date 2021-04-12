@@ -5,7 +5,7 @@ import Editor, { useMonaco } from "@monaco-editor/react";
 import { useRef, useState } from "react";
 import dashify from "dashify";
 
-const parts = [Parts.Part01];
+const parts = [Parts.Part01, Parts.Part02, Parts.Part03];
 
 export default function App() {
   const monaco = useMonaco();
