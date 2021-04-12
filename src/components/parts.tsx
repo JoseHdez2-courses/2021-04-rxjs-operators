@@ -1,9 +1,16 @@
 import React, { useState } from "react";
 import { Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { Markdown, compiler as markdownCompiler } from "markdown-to-jsx";
-import { Observable, of, interval, concat, merge } from "rxjs";
 import {
+  Observable,
+  of,
+  interval,
+  concat,
+  merge,
   combineLatest,
+  zip
+} from "rxjs";
+import {
   filter,
   first,
   last,
@@ -14,7 +21,8 @@ import {
   startWith,
   take,
   takeLast,
-  tap
+  tap,
+  withLatestFrom
 } from "rxjs/operators";
 
 export const Part01 = () => {
@@ -297,7 +305,47 @@ export const Part10 = () => {
   );
 };
 
-export const Part11 = () => {};
+export const Part11 = () => {
+  const title =
+    "Control the Output of Values with RxJS Operator withLatestFrom";
+
+  const foo = zip(interval(500), of("H", "e", "l", "l", "o"), (_, c) => c).pipe(
+    take(5)
+  );
+
+  const bar = zip(interval(300), of(0, 1, 0, 1, 0, 1, 0), (_, n) => n).pipe(
+    take(7)
+  );
+
+  let combined = foo.pipe(
+    withLatestFrom(bar, (c, n) => (n === 1 ? c.toUpperCase() : c.toLowerCase()))
+  );
+
+  const onClick = () => {
+    subscribeAndLog(combined, "combined");
+  };
+
+  const md = `
+  - Use \`withLatestFrom\` to combine two streams with a map fn.
+    - Not as used as _combineLatest_.
+
+  \`\`\`
+  ----H----e----l----l----o|     (foo)
+  --0--1--0--1--0--1--0|         (bar)
+    withLatestFrom((c,n) => n === 1 ? c.toUpperCase() : c.toLowerCase())
+  ----h----e----l----L----o|
+  \`\`\`
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={onClick}>Open console and click this</Button>
+    </div>
+  );
+};
+
 export const Part12 = () => {};
 export const Part13 = () => {};
 export const Part14 = () => {};
