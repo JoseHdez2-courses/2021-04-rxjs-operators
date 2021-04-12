@@ -9,12 +9,14 @@ import {
   concat,
   merge,
   combineLatest,
-  zip
+  zip,
+  empty
 } from "rxjs";
 import {
   buffer,
   bufferCount,
   bufferTime,
+  catchError,
   debounceTime,
   delay,
   delayWhen,
@@ -555,25 +557,23 @@ export const Part18 = () => {
 };
 
 export const Part19 = () => {
-  const title =
-    "Limit the Rate of Emissions from Observables with throttle in RxJS";
+  const title = "Handle Errors with RxJS catch";
 
-  let source: Observable<number> = interval(500).pipe(take(5));
+  let source = zip(interval(600), of(...[Array.from("abcd"), 2]), (x, y) => y);
+  let toUpper = source.pipe(map((x: any) => x.toUpperCase()));
+  let error = toUpper.pipe(catchError(empty()));
 
-  let _delay = source.pipe(delay(1000));
   let _throttleTime = source.pipe(throttleTime(1000));
 
   const md = `
+  - \`catch\` allows us to replace an error with an Observable.
   `;
 
   return (
     <div>
       <h5>{title}</h5>
       {markdownCompiler(md)}
-      <Button onClick={() => subscribeAndLog(source, "source")}>source</Button>
-      <Button onClick={() => subscribeAndLog(_throttleTime, "throttleTime")}>
-        throttleTime
-      </Button>
+      <Button onClick={() => subscribeAndLog(error, "source")}>source</Button>
     </div>
   );
 };
