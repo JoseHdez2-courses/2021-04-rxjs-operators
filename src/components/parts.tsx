@@ -15,6 +15,7 @@ import {
   buffer,
   bufferCount,
   bufferTime,
+  debounceTime,
   delay,
   delayWhen,
   filter,
@@ -29,6 +30,7 @@ import {
   take,
   takeLast,
   tap,
+  throttleTime,
   withLatestFrom
 } from "rxjs/operators";
 
@@ -438,6 +440,7 @@ export const Part15 = () => {
   const md = `
   - Use \`delay\` to delay execution in milliseconds.
   - Use \`delayWhen\` to delay execution in a variable amount.
+  - Useful for UI animations and server communications.
   `;
 
   return (
@@ -452,8 +455,58 @@ export const Part15 = () => {
   );
 };
 
-export const Part16 = () => {};
-export const Part17 = () => {};
+export const Part16 = () => {
+  const title = "Drop and Delay Observable Emissions with RxJS debounce";
+
+  let source: Observable<number> = interval(100).pipe(take(5));
+
+  let _delay = source.pipe(delay(1000));
+  let _debounceTime = source.pipe(debounceTime(1000));
+
+  const md = `
+  - \`debounceTime\` waits for N milliseconds of event silence.
+  - Useful for waiting for user to finish typing stuff before sending to server.
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={() => subscribeAndLog(_delay, "delay")}>delay</Button>
+      <Button onClick={() => subscribeAndLog(_debounceTime, "debounceTime")}>
+        debounceTime
+      </Button>
+    </div>
+  );
+};
+
+export const Part17 = () => {
+  const title =
+    "Limit the Rate of Emissions from Observables with throttle in RxJS";
+
+  let source: Observable<number> = interval(500).pipe(take(5));
+
+  let _delay = source.pipe(delay(1000));
+  let _throttleTime = source.pipe(throttleTime(1000));
+
+  const md = `
+  - \`throttle\` first emits, then causes N milliseconds of silence.
+    - It works like _debounce_, but "backwards".
+  - Other rate-limiting strategies include _auditTime_.
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={() => subscribeAndLog(source, "source")}>source</Button>
+      <Button onClick={() => subscribeAndLog(_throttleTime, "throttleTime")}>
+        throttleTime
+      </Button>
+    </div>
+  );
+};
+
 export const Part18 = () => {};
 export const Part19 = () => {};
 export const Part20 = () => {};
