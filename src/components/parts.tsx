@@ -18,6 +18,7 @@ import {
   debounceTime,
   delay,
   delayWhen,
+  distinct,
   filter,
   first,
   last,
@@ -363,8 +364,8 @@ export const Part13 = () => {
 
   let hello = of(...Array.from("Hello"));
   let bar: Observable<number> = interval(600).pipe(take(5));
-
   let _zip = zip(hello, bar, (x, y) => x);
+
   let _scan = _zip.pipe(scan((acc, x) => acc + x, ""));
 
   const onClick = () => {
@@ -507,8 +508,76 @@ export const Part17 = () => {
   );
 };
 
-export const Part18 = () => {};
-export const Part19 = () => {};
+export const Part18 = () => {
+  const title = "Filter Redundant Observable Emissions with RxJS distinct";
+
+  let hello = of(...Array.from("abacb"));
+  let bar: Observable<number> = interval(600).pipe(take(5));
+  let source = zip(hello, bar, (x, y) => x);
+
+  let _distinct = source.pipe(distinct());
+
+  let hello2 = of(...Array.from("abAcb"));
+  let source2 = zip(hello2, bar, (x, y) => x);
+  let _distinct2wrong = source2.pipe(distinct());
+  let _distinct2 = source2.pipe(distinct((x) => x.toLowerCase()));
+
+  const md = `
+  - \`distinct\` filters redundant emissions.
+    - It can take a comparison function as parameter.
+    - It keeps a registry to check for duplicate values.
+    - It can take a "flusher" function to decide when to reset the registry.
+  - \`distinctUntilChanged\` only compares with the immediately preceding emission.
+    - This is usually more useful.
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={() => subscribeAndLog(source, "source")}>source</Button>
+      <Button onClick={() => subscribeAndLog(_distinct, "distinct")}>
+        distinct
+      </Button>
+      <Button onClick={() => subscribeAndLog(source2, "source2")}>
+        source 2
+      </Button>
+      <Button
+        onClick={() => subscribeAndLog(_distinct2wrong, "distinct2wrong")}
+      >
+        distinct 2 (wrong)
+      </Button>
+      <Button onClick={() => subscribeAndLog(_distinct2, "distinct2")}>
+        distinct 2 (custom compare)
+      </Button>
+    </div>
+  );
+};
+
+export const Part19 = () => {
+  const title =
+    "Limit the Rate of Emissions from Observables with throttle in RxJS";
+
+  let source: Observable<number> = interval(500).pipe(take(5));
+
+  let _delay = source.pipe(delay(1000));
+  let _throttleTime = source.pipe(throttleTime(1000));
+
+  const md = `
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={() => subscribeAndLog(source, "source")}>source</Button>
+      <Button onClick={() => subscribeAndLog(_throttleTime, "throttleTime")}>
+        throttleTime
+      </Button>
+    </div>
+  );
+};
+
 export const Part20 = () => {};
 export const Part21 = () => {};
 export const Part22 = () => {};
