@@ -11,6 +11,9 @@ import {
   zip
 } from "rxjs";
 import {
+  buffer,
+  bufferCount,
+  bufferTime,
   filter,
   first,
   last,
@@ -352,7 +355,7 @@ export const Part12 = () => {
   const title = "Combine Values of One Observable with RxJS scan";
 
   let hello = of(...Array.from("Hello"));
-  let bar: Observable<number> = interval(1000).pipe(take(5));
+  let bar: Observable<number> = interval(600).pipe(take(5));
 
   let _zip = zip(hello, bar, (x, y) => x);
   let _scan = _zip.pipe(scan((acc, x) => acc + x, ""));
@@ -362,7 +365,7 @@ export const Part12 = () => {
   };
 
   const md = `
-  - Use \`scan\` to combine events horizontally.
+  - Use \`scan\` to combine values horizontally.
     - Basically a _reduce_ function.
     - Useful to keep state, for example to count click events.
   `;
@@ -376,7 +379,45 @@ export const Part12 = () => {
   );
 };
 
-export const Part13 = () => {};
+export const Part13 = () => {
+  const title = "Group Consecutive Values Together with RxJS Operator buffer";
+
+  let hello = of(...Array.from("Hello"));
+  let bar: Observable<number> = interval(600).pipe(take(5));
+
+  let _zip = zip(hello, bar, (x, y) => x);
+  let _bufferCount = _zip.pipe(bufferCount(2));
+  let _bufferTime = _zip.pipe(bufferTime(900));
+
+  let closing: Observable<number> = interval(900).pipe(take(3));
+  let _bufferCustom = _zip.pipe(buffer(closing));
+
+  const onClick = () => {
+    // subscribeAndLog(_bufferCount, "scan");
+  };
+
+  const md = `
+  - Use \`buffer\` to combine values horizontally.
+  - \`bufferCount(N)\` groups together N values.
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={() => subscribeAndLog(_bufferCount, "scan")}>
+        bufferCount
+      </Button>
+      <Button onClick={() => subscribeAndLog(_bufferTime, "scan")}>
+        bufferTime
+      </Button>
+      <Button onClick={() => subscribeAndLog(_bufferCustom, "scan")}>
+        buffer (custom)
+      </Button>
+    </div>
+  );
+};
+
 export const Part14 = () => {};
 export const Part15 = () => {};
 export const Part16 = () => {};
