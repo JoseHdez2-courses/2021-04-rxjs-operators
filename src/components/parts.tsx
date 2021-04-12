@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { Markdown, compiler as markdownCompiler } from "markdown-to-jsx";
+import { styled } from "styled-components";
 import {
   Observable,
   of,
@@ -14,6 +15,8 @@ import {
   buffer,
   bufferCount,
   bufferTime,
+  delay,
+  delayWhen,
   filter,
   first,
   last,
@@ -351,7 +354,9 @@ export const Part11 = () => {
   );
 };
 
-export const Part12 = () => {
+export const Part12 = () => {};
+
+export const Part13 = () => {
   const title = "Combine Values of One Observable with RxJS scan";
 
   let hello = of(...Array.from("Hello"));
@@ -379,7 +384,7 @@ export const Part12 = () => {
   );
 };
 
-export const Part13 = () => {
+export const Part14 = () => {
   const title = "Group Consecutive Values Together with RxJS Operator buffer";
 
   let hello = of(...Array.from("Hello"));
@@ -398,28 +403,55 @@ export const Part13 = () => {
 
   const md = `
   - Use \`buffer\` to combine values horizontally.
-  - \`bufferCount(N)\` groups together N values.
+    - \`bufferCount(N)\` groups together N values.
+    - \`bufferTime(N)\` groups together each N milliseconds.
+    - \`buffer(O)\` takes another observable as guide for grouping values.
   `;
 
   return (
     <div>
       <h5>{title}</h5>
       {markdownCompiler(md)}
-      <Button onClick={() => subscribeAndLog(_bufferCount, "scan")}>
+      <Button onClick={() => subscribeAndLog(_bufferCount, "bufferCount")}>
         bufferCount
       </Button>
-      <Button onClick={() => subscribeAndLog(_bufferTime, "scan")}>
+      <Button onClick={() => subscribeAndLog(_bufferTime, "bufferTime")}>
         bufferTime
       </Button>
-      <Button onClick={() => subscribeAndLog(_bufferCustom, "scan")}>
+      <Button onClick={() => subscribeAndLog(_bufferCustom, "bufferCustom")}>
         buffer (custom)
       </Button>
     </div>
   );
 };
 
-export const Part14 = () => {};
-export const Part15 = () => {};
+export const Part15 = () => {
+  const title = "Delay the Emission of Values from an RxJS Observable";
+
+  let source: Observable<number> = interval(100).pipe(take(5));
+
+  let _delay = source.pipe(delay(500));
+  let _delayWhen = source.pipe(
+    delayWhen((x) => interval(x * x * 1000).pipe(take(1)))
+  );
+
+  const md = `
+  - Use \`delay\` to delay execution in milliseconds.
+  - Use \`delayWhen\` to delay execution in a variable amount.
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={() => subscribeAndLog(_delay, "delay")}>delay</Button>
+      <Button onClick={() => subscribeAndLog(_delayWhen, "delayWhen")}>
+        delayWhen
+      </Button>
+    </div>
+  );
+};
+
 export const Part16 = () => {};
 export const Part17 = () => {};
 export const Part18 = () => {};
