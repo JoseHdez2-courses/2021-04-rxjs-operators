@@ -1,2 +1,3 @@
-# 2021-04-rxjs-operators
-Created with CodeSandbox
+# rxjs-observables
+
+Follow-along of the "RxJS Beyond the Basics - Creating Observables from scratch" egghead.io course by André Staltz.
