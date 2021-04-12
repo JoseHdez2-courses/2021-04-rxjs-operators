@@ -16,6 +16,7 @@ import {
   last,
   map,
   mapTo,
+  scan,
   skip,
   skipLast,
   startWith,
@@ -330,6 +331,7 @@ export const Part11 = () => {
     - Not as used as _combineLatest_.
 
   \`\`\`
+  (hello|)
   ----H----e----l----l----o|     (foo)
   --0--1--0--1--0--1--0|         (bar)
     withLatestFrom((c,n) => n === 1 ? c.toUpperCase() : c.toLowerCase())
@@ -346,7 +348,34 @@ export const Part11 = () => {
   );
 };
 
-export const Part12 = () => {};
+export const Part12 = () => {
+  const title = "Combine Values of One Observable with RxJS scan";
+
+  let hello = of(...Array.from("Hello"));
+  let bar: Observable<number> = interval(1000).pipe(take(5));
+
+  let _zip = zip(hello, bar, (x, y) => x);
+  let _scan = _zip.pipe(scan((acc, x) => acc + x, ""));
+
+  const onClick = () => {
+    subscribeAndLog(_scan, "scan");
+  };
+
+  const md = `
+  - Use \`scan\` to combine events horizontally.
+    - Basically a _reduce_ function.
+    - Useful to keep state, for example to count click events.
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={onClick}>Open console and click this</Button>
+    </div>
+  );
+};
+
 export const Part13 = () => {};
 export const Part14 = () => {};
 export const Part15 = () => {};
