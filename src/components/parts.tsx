@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { Button, ListGroup, ListGroupItem } from "react-bootstrap";
 import { Markdown, compiler as markdownCompiler } from "markdown-to-jsx";
-import { Observable, of, interval, concat } from "rxjs";
+import { Observable, of, interval, concat, merge } from "rxjs";
 import {
+  combineLatest,
   filter,
   first,
   last,
@@ -198,11 +199,11 @@ export const Part07 = () => {
   };
 
   const md = `
-  - Use **takeLast** to take the last N events.
+  - Use \`takeLast\` to take the last N events.
     - It will wait until the stream is completed, as it can't know a priori.
-  - Use **last** to take the last event.
+  - Use \`last\` to take the last event.
     - This is usually the most common one to use.
-  - Use **skipLast** to skip the last N events.
+  - Use \`skipLast\` to skip the last N events.
 
   All of these will only work on a stream that finishes.
   `;
@@ -231,9 +232,9 @@ export const Part08 = () => {
   };
 
   const md = `
-  - We can append more values using **concat**.
+  - We can append more values sequentially using \`concat\`.
     - Notice it is done synchronously, independent of the source's interval.
-  - We can prepend a single value using **startWith**.
+  - We can prepend a single value using \`startWith\`.
   `;
 
   return (
@@ -245,8 +246,57 @@ export const Part08 = () => {
   );
 };
 
-export const Part09 = () => {};
-export const Part10 = () => {};
+export const Part09 = () => {
+  const title = "Merge Values in Parallel with RxJS Operator merge";
+
+  let clicksOnButton: Observable<number> = interval(500).pipe(take(4));
+  let clicksOnThePage: Observable<number> = interval(300).pipe(take(5));
+
+  let allClicks = merge(clicksOnButton, clicksOnThePage);
+
+  const onClick = () => {
+    subscribeAndLog(allClicks, "allClicks");
+  };
+
+  const md = `
+  - Use \`merge\` to merge values in parallel.
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={onClick}>Open console and click this</Button>
+    </div>
+  );
+};
+
+export const Part10 = () => {
+  const title = "Merge Values in Parallel with RxJS Operator merge";
+
+  let weight: Observable<number> = interval(500).pipe(take(4));
+  let height: Observable<number> = interval(300).pipe(take(5));
+
+  let bmi = combineLatest(weight, height, (w, h) => w + h);
+
+  const onClick = () => {
+    subscribeAndLog(bmi, "bmi");
+  };
+
+  const md = `
+  - Use \`combineLatest\` to combine values using a combinator function.
+    - Unlike *merge* which is an OR-style operator, this is an AND-style op.
+  `;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={onClick}>Open console and click this</Button>
+    </div>
+  );
+};
+
 export const Part11 = () => {};
 export const Part12 = () => {};
 export const Part13 = () => {};
