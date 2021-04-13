@@ -1,7 +1,6 @@
-import React, { useState } from "react";
-import { Button, ListGroup, ListGroupItem } from "react-bootstrap";
-import { Markdown, compiler as markdownCompiler } from "markdown-to-jsx";
-import { styled } from "styled-components";
+import React from "react";
+import { Button } from "react-bootstrap";
+import { compiler as markdownCompiler } from "markdown-to-jsx";
 import {
   Observable,
   of,
@@ -541,6 +540,7 @@ export const Part18 = () => {
       <Button onClick={() => subscribeAndLog(_distinct, "distinct")}>
         distinct
       </Button>
+      <hr />
       <Button onClick={() => subscribeAndLog(source2, "source2")}>
         source 2
       </Button>
@@ -559,21 +559,53 @@ export const Part18 = () => {
 export const Part19 = () => {
   const title = "Handle Errors with RxJS catch";
 
-  let source = zip(interval(600), of(...[Array.from("abcd"), 2]), (x, y) => y);
+  let letters = of(...[...Array.from("abcd"), 2]);
+  let bar: Observable<number> = interval(600).pipe(take(5));
+  let source = zip(letters, bar, (x, y) => x);
   let toUpper = source.pipe(map((x: any) => x.toUpperCase()));
-  let error = toUpper.pipe(catchError(empty()));
 
-  let _throttleTime = source.pipe(throttleTime(1000));
+  let _catchError = toUpper.pipe(catchError((e, outputObs) => empty()));
+  let retryError = toUpper.pipe(catchError((e, outputObs) => outputObs));
+
+  let foo = interval(500).pipe(map(() => Math.random()));
+
+  let source2 = foo.pipe(
+    map((x) => {
+      if (x < 0.5) {
+        return x;
+      } else {
+        throw new Error("Number too large");
+      }
+    })
+  );
+
+  let retryError2 = source2.pipe(catchError((e, outputObs) => outputObs));
 
   const md = `
-  - \`catch\` allows us to replace an error with an Observable.
+  - \`catchError\` allows us to replace an error with an Observable.
+    - Not only useful for replacing with another Observable, but also to resubscribe.
   `;
 
   return (
     <div>
       <h5>{title}</h5>
       {markdownCompiler(md)}
-      <Button onClick={() => subscribeAndLog(error, "source")}>source</Button>
+      <Button onClick={() => subscribeAndLog(toUpper, "toUpper")}>
+        toUpper
+      </Button>
+      <Button onClick={() => subscribeAndLog(_catchError, "catchError")}>
+        catchError
+      </Button>
+      <Button onClick={() => subscribeAndLog(retryError, "retryError")}>
+        retry error
+      </Button>
+      <hr />
+      <Button onClick={() => subscribeAndLog(source2, "source 2")}>
+        numbers
+      </Button>
+      <Button onClick={() => subscribeAndLog(retryError2, "retryError 2")}>
+        retry error 2
+      </Button>
     </div>
   );
 };

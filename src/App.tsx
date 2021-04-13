@@ -54,7 +54,7 @@ const PartTab = ({ p }) => (
       <Editor
         options={{ readOnly: true }}
         value={p.toString()}
-        height="40vh"
+        height="90vh"
         language="javascript"
         theme="vs-dark"
       />
