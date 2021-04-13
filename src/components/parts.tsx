@@ -25,6 +25,8 @@ import {
   last,
   map,
   mapTo,
+  retry,
+  retryWhen,
   scan,
   skip,
   skipLast,
@@ -610,6 +612,42 @@ export const Part19 = () => {
   );
 };
 
-export const Part20 = () => {};
+export const Part20 = () => {
+  const title = "Resubscribe to an Observable on Error with RxJS retry";
+
+  let letters = of(...[...Array.from("abcd"), 2]);
+  let bar: Observable<number> = interval(600).pipe(take(5));
+  let source = zip(letters, bar, (x, y) => x);
+  let toUpper = source.pipe(map((x: any) => x.toUpperCase()));
+
+  let retryTwice = toUpper.pipe(retry(2));
+
+  let retryAfter3s = toUpper.pipe(
+    retryWhen((errorObs) => errorObs.pipe(delay(3000)))
+  );
+
+  const md = `
+- \`retry\` retries N number of times.
+  - Useful for HTTP requests.
+- \`retryWhen\` takes another Observable as guide for when to resubscribe.
+`;
+
+  return (
+    <div>
+      <h5>{title}</h5>
+      {markdownCompiler(md)}
+      <Button onClick={() => subscribeAndLog(toUpper, "toUpper")}>
+        toUpper
+      </Button>
+      <Button onClick={() => subscribeAndLog(retryTwice, "retry")}>
+        retry twice
+      </Button>
+      <Button onClick={() => subscribeAndLog(retryAfter3s, "retryAfter3s")}>
+        retry after 3s
+      </Button>
+    </div>
+  );
+};
+
 export const Part21 = () => {};
 export const Part22 = () => {};
