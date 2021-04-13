@@ -683,32 +683,16 @@ export const Part21 = () => {
 };
 
 export const Part22 = () => {
-  const title = "";
-
-  let source = zip(
-    of(...[...Array.from("abcd"), 2]),
-    interval(600).pipe(take(5)),
-    (x, y) => x
-  ).pipe(map((x: any) => x.toUpperCase()));
-
-  let repeat3times = source.pipe(repeat(3));
-  let repeatForever = source.pipe(repeat());
+  const title = "More operators and conclusion";
 
   const md = `
-  bye now
+  There are many other operators, but the ones in here are the most common and useful ones.
   `;
 
   return (
     <div>
       <h5>{title}</h5>
       {markdownCompiler(md)}
-      <Button onClick={() => subscribeAndLog(source, "source")}>toUpper</Button>
-      <Button onClick={() => subscribeAndLog(repeat3times, "repeat3times")}>
-        repeat3times
-      </Button>
-      <Button onClick={() => subscribeAndLog(repeatForever, "repeatForever")}>
-        repeatForever
-      </Button>
     </div>
   );
 };
